@@ -19,11 +19,10 @@ if (app.Environment.IsDevelopment() || true)
 
 app.MapControllers();
 
+// Ensure database created
+using var scope = app.Services.CreateScope();
+var db = scope.ServiceProvider.GetRequiredService<Rebloom.Data.AppDbContext>();
+db.Database.EnsureCreated();
+
 app.Run();
 
-// Ensure database created
-using (var scope = app.Services.CreateScope())
-{
-	var db = scope.ServiceProvider.GetRequiredService<Rebloom.Data.AppDbContext>();
-	db.Database.EnsureCreated();
-}

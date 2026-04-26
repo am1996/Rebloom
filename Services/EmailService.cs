@@ -25,7 +25,7 @@ namespace Rebloom.Services
             var useSsl = smtp.GetValue<bool>("UseSsl");
 
             var message = new MimeMessage();
-            message.From.Add(MailboxAddress.Parse(from));
+            message.From.Add(MailboxAddress.Parse(from!));
             message.To.Add(MailboxAddress.Parse(toEmail));
             message.Subject = "Verify your account";
 
@@ -47,7 +47,7 @@ namespace Rebloom.Services
             await client.ConnectAsync(host, port, useSsl);
             if (!string.IsNullOrEmpty(user))
             {
-                await client.AuthenticateAsync(user, pass);
+                await client.AuthenticateAsync(user, pass!);
             }
             await client.SendAsync(message);
             await client.DisconnectAsync(true);
