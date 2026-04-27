@@ -12,11 +12,13 @@ namespace Rebloom.Controllers
     {
         private readonly AppDbContext _db;
         private readonly IEmailService _email;
+        private readonly ISmsService _sms;
 
-        public UserController(AppDbContext db, IEmailService email)
+        public UserController(AppDbContext db, IEmailService email, ISmsService sms)
         {
             _db = db;
             _email = email;
+            _sms = sms;
         }
 
         [HttpPost("register")]
@@ -86,21 +88,18 @@ namespace Rebloom.Controllers
         }
 
         [HttpPost("forgot-password")]
-        public async Task<ActionResult<AuthResponse>> ForgotPassword([FromBody] AuthRequest request)
+        public ActionResult<AuthResponse> ForgotPassword()
         {
-            if (string.IsNullOrWhiteSpace(request.Email) && string.IsNullOrWhiteSpace(request.Phone))
-                return BadRequest(new AuthResponse { Success = false, Message = "Email or phone required" });
+            return BadRequest(new AuthResponse { Success = false, Message = "Use /forgot-password/email or /forgot-password/sms endpoints" });
+        }
 
-            User? user = null;
-            if (!string.IsNullOrWhiteSpace(request.Email))
-            {
-                user = await _db.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
-            }
-            else if (!string.IsNullOrWhiteSpace(request.Phone))
-            {
-                user = await _db.Users.FirstOrDefaultAsync(u => u.PhoneNumber == request.Phone);
-            }
+        [HttpPost("forgot-password/email")]
+        public async Task<ActionResult<AuthResponse>> ForgotPasswordEmail([FromBody] ForgotPasswordEmailRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request?.Email))
+                return BadRequest(new AuthResponse { Success = false, Message = "Email required" });
 
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
             if (user == null)
                 return Ok(new AuthResponse { Success = true, Message = "If the account exists, a reset link was sent", Token = null });
 
@@ -108,22 +107,29 @@ namespace Rebloom.Controllers
             user.ResetToken = reset;
             await _db.SaveChangesAsync();
 
-            if (!string.IsNullOrWhiteSpace(request.Phone) && !string.IsNullOrWhiteSpace(user.PhoneNumber))
-            {
-                // Send SMS with token
-                var smsMessage = $"Your password reset code: {reset}";
-                if (HttpContext.RequestServices.GetService(typeof(Rebloom.Services.ISmsService)) is Rebloom.Services.ISmsService sms)
-                {
-                    await sms.SendSmsAsync(user.PhoneNumber, smsMessage);
-                }
-            }
-            else
-            {
-                // Send email with reset link
-                await _email.SendPasswordResetAsync(user.Email, user.Username, reset);
-            }
+            await _email.SendPasswordResetAsync(user.Email, user.Username, reset);
 
             return Ok(new AuthResponse { Success = true, Message = "If the account exists, a reset link was sent", Token = null });
+        }
+
+        [HttpPost("forgot-password/sms")]
+        public async Task<ActionResult<AuthResponse>> ForgotPasswordSms([FromBody] ForgotPasswordSmsRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request?.Phone))
+                return BadRequest(new AuthResponse { Success = false, Message = "Phone required" });
+
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.PhoneNumber == request.Phone);
+            if (user == null)
+                return Ok(new AuthResponse { Success = true, Message = "If the account exists, a reset code was sent", Token = null });
+
+            var reset = Guid.NewGuid().ToString();
+            user.ResetToken = reset;
+            await _db.SaveChangesAsync();
+
+            var smsMessage = $"Your password reset code: {reset}";
+            await _sms.SendSmsAsync(user.PhoneNumber!, smsMessage);
+
+            return Ok(new AuthResponse { Success = true, Message = "If the account exists, a reset code was sent", Token = null });
         }
 
         [HttpPost("reset-password")]
