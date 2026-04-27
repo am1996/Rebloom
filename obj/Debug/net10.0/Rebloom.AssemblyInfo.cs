@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Rebloom")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d71885b11a30297d46a50f0a0f9178a3a6818c9c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+07143303106c8e9ef58f4f99b61ca0cbd7a29ce4")]
 [assembly: System.Reflection.AssemblyProductAttribute("Rebloom")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Rebloom")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -8,6 +8,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<Rebloom.Data.AppDbContext>(options =>
 	options.UseSqlite(builder.Configuration.GetConnectionString("Default") ?? "Data Source=rebloom.db"));
 builder.Services.AddScoped<Rebloom.Services.IEmailService, Rebloom.Services.EmailService>();
+builder.Services.AddScoped<Rebloom.Services.ISmsService, Rebloom.Services.SmsService>();
 
 var app = builder.Build();
 

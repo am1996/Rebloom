@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "G:\\projects\\Rebloom\\Rebloom.csproj": {}
+    "g:\\projects\\Rebloom\\Rebloom.csproj": {}
   },
   "projects": {
-    "G:\\projects\\Rebloom\\Rebloom.csproj": {
+    "g:\\projects\\Rebloom\\Rebloom.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "G:\\projects\\Rebloom\\Rebloom.csproj",
+        "projectUniqueName": "g:\\projects\\Rebloom\\Rebloom.csproj",
         "projectName": "Rebloom",
-        "projectPath": "G:\\projects\\Rebloom\\Rebloom.csproj",
+        "projectPath": "g:\\projects\\Rebloom\\Rebloom.csproj",
         "packagesPath": "C:\\Users\\ahmed.magdyy\\.nuget\\packages\\",
-        "outputPath": "G:\\projects\\Rebloom\\obj\\",
+        "outputPath": "g:\\projects\\Rebloom\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ahmed.magdyy\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -57,9 +57,17 @@
               "target": "Package",
               "version": "[10.0.7, )"
             },
+            "SendGrid": {
+              "target": "Package",
+              "version": "[9.28.0, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[10.1.7, )"
+            },
+            "Twilio": {
+              "target": "Package",
+              "version": "[5.74.0, )"
             }
           },
           "imports": [

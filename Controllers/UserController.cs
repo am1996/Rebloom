@@ -88,10 +88,19 @@ namespace Rebloom.Controllers
         [HttpPost("forgot-password")]
         public async Task<ActionResult<AuthResponse>> ForgotPassword([FromBody] AuthRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.Email))
-                return BadRequest(new AuthResponse { Success = false, Message = "Email required" });
+            if (string.IsNullOrWhiteSpace(request.Email) && string.IsNullOrWhiteSpace(request.Phone))
+                return BadRequest(new AuthResponse { Success = false, Message = "Email or phone required" });
 
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            User? user = null;
+            if (!string.IsNullOrWhiteSpace(request.Email))
+            {
+                user = await _db.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            }
+            else if (!string.IsNullOrWhiteSpace(request.Phone))
+            {
+                user = await _db.Users.FirstOrDefaultAsync(u => u.PhoneNumber == request.Phone);
+            }
+
             if (user == null)
                 return Ok(new AuthResponse { Success = true, Message = "If the account exists, a reset link was sent", Token = null });
 
@@ -99,9 +108,38 @@ namespace Rebloom.Controllers
             user.ResetToken = reset;
             await _db.SaveChangesAsync();
 
-            await _email.SendVerificationEmailAsync(user.Email, user.Username, reset);
+            if (!string.IsNullOrWhiteSpace(request.Phone) && !string.IsNullOrWhiteSpace(user.PhoneNumber))
+            {
+                // Send SMS with token
+                var smsMessage = $"Your password reset code: {reset}";
+                if (HttpContext.RequestServices.GetService(typeof(Rebloom.Services.ISmsService)) is Rebloom.Services.ISmsService sms)
+                {
+                    await sms.SendSmsAsync(user.PhoneNumber, smsMessage);
+                }
+            }
+            else
+            {
+                // Send email with reset link
+                await _email.SendPasswordResetAsync(user.Email, user.Username, reset);
+            }
 
             return Ok(new AuthResponse { Success = true, Message = "If the account exists, a reset link was sent", Token = null });
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<ActionResult<AuthResponse>> ResetPassword([FromBody] ResetPasswordRequest req)
+        {
+            if (string.IsNullOrWhiteSpace(req.Token) || string.IsNullOrWhiteSpace(req.NewPassword))
+                return BadRequest(new AuthResponse { Success = false, Message = "Token and new password required" });
+
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.ResetToken == req.Token);
+            if (user == null) return BadRequest(new AuthResponse { Success = false, Message = "Invalid token" });
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(req.NewPassword);
+            user.ResetToken = null;
+            await _db.SaveChangesAsync();
+
+            return Ok(new AuthResponse { Success = true, Message = "Password reset successful" });
         }
     }
 }

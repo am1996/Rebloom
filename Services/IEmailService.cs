@@ -5,5 +5,6 @@ namespace Rebloom.Services
     public interface IEmailService
     {
         Task SendVerificationEmailAsync(string toEmail, string username, string token);
+        Task SendPasswordResetAsync(string toEmail, string username, string token);
     }
 }

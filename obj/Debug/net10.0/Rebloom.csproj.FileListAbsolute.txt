@@ -70,3 +70,11 @@ G:\projects\Rebloom\bin\Debug\net10.0\runtimes\win-arm\native\e_sqlite3.dll
 G:\projects\Rebloom\bin\Debug\net10.0\runtimes\win-arm64\native\e_sqlite3.dll
 G:\projects\Rebloom\bin\Debug\net10.0\runtimes\win-x64\native\e_sqlite3.dll
 G:\projects\Rebloom\bin\Debug\net10.0\runtimes\win-x86\native\e_sqlite3.dll
+G:\projects\Rebloom\bin\Debug\net10.0\Microsoft.IdentityModel.JsonWebTokens.dll
+G:\projects\Rebloom\bin\Debug\net10.0\Microsoft.IdentityModel.Logging.dll
+G:\projects\Rebloom\bin\Debug\net10.0\Microsoft.IdentityModel.Tokens.dll
+G:\projects\Rebloom\bin\Debug\net10.0\Newtonsoft.Json.dll
+G:\projects\Rebloom\bin\Debug\net10.0\SendGrid.dll
+G:\projects\Rebloom\bin\Debug\net10.0\StarkbankEcdsa.dll
+G:\projects\Rebloom\bin\Debug\net10.0\System.IdentityModel.Tokens.Jwt.dll
+G:\projects\Rebloom\bin\Debug\net10.0\Twilio.dll
